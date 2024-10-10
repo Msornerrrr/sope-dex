@@ -31,11 +31,7 @@ cd isaacgym/python
 pip install -e .
 (test installation) python examples/joint_monkey.py
 ```
-If failed, you can try to add the path to your isaacgym python library at the start of the `train.py` file
-```
-sys.path.append('/home/$USER/isaacgym_project/isaacgym/python')
-```
-(change the path according to the location of isaacgym in your machine)
+
 
 * Singulating Object in Packed Environment
 ```
@@ -51,6 +47,18 @@ bash scripts/experiment.sh
 ```
 * Trained checkpoint. Download from [Link](https://drive.google.com/file/d/1_D6juQDMIhkEreqRCRpun3UUq5n5l_f1/view?usp=drive_link).
 
+## Troubleshoot
+If failed, you can try to add the path to your isaacgym python library at the start of the `train.py` file
+```
+sys.path.append('/home/$USER/isaacgym_project/isaacgym/python')
+```
+(change the path according to the location of isaacgym in your machine)
+
+You can also try to add the following command to your `~/.bashrc` file
+```
+export LD_LIBRARY_PATH="/home/$USER/miniconda3/envs/sopedex/lib"
+```
+(change the path according to the location of sopedex for conda environment in your machine)
 
 ## Training
 
