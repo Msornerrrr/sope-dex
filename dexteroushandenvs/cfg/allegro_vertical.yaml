@@ -1,0 +1,364 @@
+# if given, will override the device setting in gym.
+env:
+  env_name: "allegro_vertical"
+  numEnvs: 2048
+  envSpacing: 1
+  episodeLength: 120
+  # aggregateMode: 1
+  # enableCameraSensors: False
+  # cameraDebug: False
+  # pointCloudDebug: False
+
+  # stiffnessScale: 1.0
+  # forceLimitScale: 1.0
+  # useRelativeControl: False
+  # dofSpeedScale: 100.0
+  actionsMovingAverageHand: 0.2
+  actionsMovingAverageArm: 0.2
+  controlFrequencyInv: 3 # 20 Hz
+
+  # Random forces applied to the object
+  forceScale: 1.0
+  forceProbRange: [0.2, 0.25]
+  forceDecay: 0.99
+  forceDecayInterval: 0.10
+
+  pandaAllegroConfig:
+    assetRoot: "../assets"
+    assetFileName: "urdf/franka_description/robots/franka_panda_allegro.urdf"
+    basePosition: [0, 0, 0]
+    allegroFriction: 1
+    allegroRestitution: 0
+    fingertipNames: ["link_3.0", "link_7.0", "link_11.0", "link_15.0"]
+    armDof: 7
+    totalDof: 23
+    armMovableDofNames: ["panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5", "panda_joint6", "panda_joint7"]
+    # armDofProperties:
+    #   stiffness: [40, 30, 50, 25, 35, 25, 10]
+    #   damping: [4, 6, 5, 5, 3, 2, 1]
+    #   pGain: [40, 30, 50, 25, 35, 25, 10]
+    #   dGain: [4, 6, 5, 5, 3, 2, 1]
+    allegroDefaultDof: [
+      0, 0.3, 0.4, 1.2, # ring
+      0, 0.3, 0.4, 1.2, # thumb
+      0, 0.3, 0.4, 1.2, # middle
+      0, 0.3, 0.4, 1.2 # index
+    ]
+    # allegroDofProperties:
+    #   velocity: 3.14
+    #   effort: 20.0
+    #   stiffness: [
+    #     700, 800, 900, 500, 
+    #     700, 800, 900, 500, 
+    #     700, 800, 900, 500, 
+    #     700, 800, 900, 500
+    #   ]
+    #   damping: [
+    #     28, 50, 55, 40, 
+    #     28, 50, 55, 40, 
+    #     28, 50, 55, 40, 
+    #     28, 50, 55, 40
+    #   ]
+    #   pGain: [
+    #     700, 800, 900, 500, 
+    #     700, 800, 900, 500, 
+    #     700, 800, 900, 500, 
+    #     700, 800, 900, 500
+    #   ]
+    #   dGain: [
+    #     28, 50, 55, 40, 
+    #     28, 50, 55, 40, 
+    #     28, 50, 55, 40, 
+    #     28, 50, 55, 40
+    #   ]
+    handOrientation: "vertical" # ["horizontal", "vertical]
+    targetTopEdgeOffset: [0.0, 0.0, 0.03]
+
+  plateConfig:
+    numPlates: 4
+    plateSize: 0.2
+    plateThickness: 0.025
+    plateDensity: 100
+    plateSpacing: 0.005
+    plateInitialHeight: 0
+    plateFriction: 1
+    plateRestitution: 0
+    targetPlateIndex: 1
+
+  boxConfig:
+    boxThickness: 0.01
+    boxHeight: 0.18
+    boxWidth: 0.2
+    # Good choice of boxWidth:
+    # - numPlates * plateThickness +
+    # - (numPlates-1) * plateSpacing +
+    # - 2 * boxPlateSpacing +
+    # - 2 * boxThickness + 
+    # - extraSpace
+    # boxPlateSpacing: 0.01
+    boxPlateSideSpacing: 0.005
+    boxDegree: 0 # [0, 90]
+    boxFriction: 1
+    boxRestitution: 0
+
+  tableConfig:
+    tableSize: [0.5, 0.8, 0.1]
+    tablePosition: [0.5, 0, 0.05]
+
+  actionDesign:
+    phase1PerturbationScale: 0.0 # 0.03
+    phase1RealtimeTracking: False
+    phase2TransitionTime: 45
+    phase2Increment: -0.03
+    phase2TargetHeight: -0.03
+    phase3TransitionTime: 70
+    phase3Increment: 0.075
+    phase3TargetHeight: 0.25
+
+  observationType: "full_state"
+  observationDesign: # ifUse
+    stackFrames: 4
+    useAllegroDofPos: True
+    useAllegroDofVel: False
+    useAllegroFingerTip: False
+    useTargetPlateCornerDist: True
+    useEEInfo: True
+    useLastAction: False
+    useTactileSensor: False
+    useProgress: True
+
+  stateDesign: # ifUse
+    stackFrames: 4
+    useAllegroDofPos: True
+    useAllegroDofVel: True
+    useAllegroFingerTip: True
+    useTargetPlateCornerDist: True
+    useEEInfo: True
+    useLastAction: True
+    useTactileSensor: True
+    useProgress: True
+
+  rewardPhase1: # Reward Scale
+    initHeightBonus: 0
+    heightReward: 0 # 10
+    successBonus: 0 # 2.5
+    proximityReward: 0.2
+    graspReward: 0 # 0.05
+    splitReward: 0 # 10
+    splitPenalty: -10 # <-- key reward: spliting !!!
+    dropPenalty: 0 # -2
+    actionPenalty: -0.001
+    velocityPenalty: 0 # -0.05
+    accelerationPenalty: 0 # -0.05
+    otherPlatePenalty: -11
+
+  rewardPhase2: # Reward Scale
+    initHeightBonus: 0
+    heightReward: 0 # 10
+    successBonus: 0 # 2.5
+    proximityReward: 0.2
+    graspReward: 0.1 # <-- key reward: grasping !!!
+    splitReward: 0 # 10
+    splitPenalty: -5
+    dropPenalty: 0 # -2
+    actionPenalty: -0.001
+    velocityPenalty: 0 # -0.05
+    accelerationPenalty: 0 # -0.05
+    otherPlatePenalty: -11
+
+  rewardPhase3: # Reward Scale
+    initHeightBonus: 0
+    heightReward: 10 # <-- key reward: lifting !!!
+    successBonus: 0 # 2.5
+    proximityReward: 0.2
+    graspReward: 0.1
+    splitReward: 0 # 10
+    splitPenalty: 0 # -0.5
+    dropPenalty: 0 # -2
+    actionPenalty: 0
+    velocityPenalty: 0
+    accelerationPenalty: 0
+    otherPlatePenalty: -11
+
+  curriculumLearningDesign:
+    successThreshold: 0.6
+    # increasePositioNoise: False
+    # increasePositionNoiseStep: 0.0025
+    maxPositionNoise: 0.05
+    increaseMass: False
+    increaseMassScale: 1.5
+    maxMass: 0.3
+    decreaseSpacing: False
+    decreaseSpacingScale: 0.9
+    # decreaseAction: False
+    # decreaseActionScale: 0.8
+    # decreaseActionInit: 0.2
+    # decreaseActionMin: 0.02
+
+  randomization: # [ifRandomize, lower, upper]
+    resetTargetPlate: True
+    resetCenterPositionNoise: [False, -0.05, 0.05] # buggy, not used
+    resetSpacingNoise: [True, 0, 0.005]
+    resetOrientationNoise: [False, -0.13, 0.13]
+    resetPlateThickness: [False, 0.025, 0.03]
+    resetBoxWidth: [False, 0.18, 0.22]
+    resetEEPosNoise: [True, -0.01, 0.01]
+
+  evaluation:
+    consecutiveTimeSteps: 30 # 30, 60
+    logTrajectory: False
+    logTrajectoryFile: "sample/traj.py"
+    runTrajectory: False
+    runTrajectoryFile: "sample/traj.py"
+    logDofState: False
+    logDofPosFile: "sample/dof_pos.py"
+    logDofVelFile: "sample/dof_vel.py"
+    logDofEffortFile: "sample/dof_effort.py"
+    logObsSpace: False
+    logObsSpaceFile: "sample/obs_space.py"
+    stopEps: -1 # 100
+
+  debugConfig: # ifDebug
+    debugTargetInitPos: False
+    debugHandCenter: False
+    debugAllegroEEPos: False
+    debugHandTips: False
+    debugContactSensors: False
+    debugIsContact: False
+    debugPlateCenter: False
+    debugPlateCorners: False
+    debugPlateEdges: False
+    debugBoxCorners: False
+    debugNeighborPose: False
+
+  viewerConfig: 
+    direction: "left"
+  
+  handAgentIndex: "[[0, 1, 2, 3, 4, 5]]"
+  asymmetric_observations: True
+  # successTolerance: 0.1
+  # printNumSuccesses: False
+  maxConsecutiveSuccesses: 0
+
+task:
+  randomize: True
+  randomization_params:
+    frequency: 600   # Define how many simulation steps between generating new randomizations
+    observations:
+      range: [0, .002] # range for the white noise
+      range_correlated: [0, .001 ] # range for correlated noise, refreshed with freq `frequency`
+      operation: "additive"
+      distribution: "gaussian"
+      schedule: "linear"   # "constant" is to turn on noise after `schedule_steps` num steps
+      schedule_steps: 40000
+    actions:
+      range: [0., .05]
+      range_correlated: [0, .015] # range for correlated noise, refreshed with freq `frequency`
+      operation: "additive"
+      distribution: "gaussian"
+      schedule: "linear"  # "linear" will linearly interpolate between no rand and max rand
+      schedule_steps: 40000
+    sim_params:
+      gravity:
+        range: [0, 0.4]
+        operation: "additive"
+        distribution: "gaussian"
+        schedule: "linear"  # "linear" will linearly interpolate between no rand and max rand
+        schedule_steps: 40000
+    actor_params:
+      hand:
+        color: True
+        tendon_properties:
+          damping:
+            range: [0.3, 3.0]
+            operation: "scaling"
+            distribution: "loguniform"
+            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+          stiffness:
+            range: [0.75, 1.5]
+            operation: "scaling"
+            distribution: "loguniform"
+            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+        dof_properties:
+          damping:
+            range: [0.3, 3.0]
+            operation: "scaling"
+            distribution: "loguniform"
+            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+          stiffness:
+            range: [0.75, 1.5]
+            operation: "scaling"
+            distribution: "loguniform"
+            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+          lower:
+            range: [0, 0.01]
+            operation: "additive"
+            distribution: "gaussian"
+            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+          upper:
+            range: [0, 0.01]
+            operation: "additive"
+            distribution: "gaussian"
+            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+        rigid_body_properties:
+          mass:
+            range: [0.5, 1.5]
+            operation: "scaling"
+            distribution: "uniform"
+            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+        rigid_shape_properties:
+          friction:
+            num_buckets: 250
+            range: [0.7, 1.3]
+            operation: "scaling"
+            distribution: "uniform"
+            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+      plate:
+        # scale:
+        #   range: [0.95, 1.05]
+        #   operation: "scaling"
+        #   distribution: "uniform"
+        #   schedule: "linear"  # "linear" will scale the current random sample by ``min(current num steps, schedule_steps) / schedule_steps`
+        #   schedule_steps: 30000
+        rigid_body_properties:
+          mass:
+            range: [0.5, 1.5]
+            operation: "scaling"
+            distribution: "uniform"
+            schedule: "linear"  # "linear" will scale the current random sample by ``min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+        rigid_shape_properties:
+          friction:
+            num_buckets: 250
+            range: [0.7, 1.3]
+            operation: "scaling"
+            distribution: "uniform"
+            schedule: "linear"  # "linear" will scale the current random sample by `min(current num steps, schedule_steps) / schedule_steps`
+            schedule_steps: 30000
+
+sim:
+  substeps: 2
+  physx:
+    num_threads: 16
+    solver_type: 1  # 0: pgs, 1: tgs
+    num_position_iterations: 8
+    num_velocity_iterations: 0
+    contact_offset: 0.002
+    rest_offset: 0.0
+    bounce_threshold_velocity: 0.2
+    max_depenetration_velocity: 1000.0
+    default_buffer_size_multiplier: 5.0
+    contact_collection: 1 # 0: CC_NEVER (don't collect contact info), 1: CC_LAST_SUBSTEP (collect only contacts on last substep), 2: CC_ALL_SUBSTEPS (default - all contacts)
+  flex:
+    num_outer_iterations: 5
+    num_inner_iterations: 20
+    warm_start: 0.8
+    relaxation: 0.75
