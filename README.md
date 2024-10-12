@@ -9,6 +9,7 @@
 - [Installation](#installation)
 - [Training](#training)
 - [Evaluation](#evaluation)
+- [Toubleshoot](#troubleshoot)
 - [Acknowledgement](#acknowledgement)
 - [Citations](#citations)
 - [License](#license)
@@ -47,19 +48,6 @@ bash scripts/experiment.sh
 ```
 * Trained checkpoint. Download from [Link](https://drive.google.com/file/d/1_D6juQDMIhkEreqRCRpun3UUq5n5l_f1/view?usp=drive_link).
 
-## Troubleshoot
-If failed, you can try to add the path to your isaacgym python library at the start of the `train.py` file
-```
-sys.path.append('/home/$USER/isaacgym_project/isaacgym/python')
-```
-(change the path according to the location of isaacgym in your machine)
-
-You can also try to add the following command to your `~/.bashrc` file
-```
-export LD_LIBRARY_PATH="/home/$USER/miniconda3/envs/sopedex/lib"
-```
-(change the path according to the location of sopedex for conda environment in your machine)
-
 ## Training
 
 To train the model, run this line in `dexteroushandenvs` folder:
@@ -77,6 +65,29 @@ bash scripts/test.sh
 ```
 you can specify which trained model to use by changing `--model_dir` to use the corresponding path.
 
+## Troubleshoot
+If failed, you can try to add the path to your isaacgym python library at the start of the `train.py` file
+```
+sys.path.append('/home/$USER/isaacgym_project/isaacgym/python')
+```
+(change the path according to the location of isaacgym in your machine)
+
+You can also try to add the following command to your `~/.bashrc` file
+```
+export LD_LIBRARY_PATH="/home/$USER/miniconda3/envs/sopedex/lib"
+```
+(change the path according to the location of sopedex for conda environment in your machine)
+
+If you encounter this error: `AttributeError: module 'numpy' has no attribute 'float'.` Feel free to make the following modification.
+Change this line:
+```
+def get_axis_params(value, axis_idx, x_value=0., dtype=np.float, n_dims=3):
+```
+to the following line:
+```
+def get_axis_params(value, axis_idx, x_value=0., dtype=np.float64, n_dims=3):
+```
+inside the `torch_utils.py` file from your installed isaacgym folder.
 
 ## Acknowledgement
 We thank the list of contributors from the [Dynamic Handover](https://github.com/cypypccpy/dynamic_handover), [Sequential Dexterity](https://github.com/sequential-dexterity/SeqDex), and [Bi-DexHands](https://github.com/PKU-MARL/DexterousHands).
